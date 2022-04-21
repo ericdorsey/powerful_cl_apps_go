@@ -75,17 +75,22 @@ func (l *List) Get(filename string) error {
         if errors.Is(err, os.ErrNotExist) {
             return nil
         }
-        return nil
+        return err
     }
-    return err
-
     // Empty file
     if len(file) == 0 {
+        fmt.Println("File was empty! in .Get()")
         return nil
     }
+    
     return json.Unmarshal(file, l)
 }
 
 func main() {
-    
+    /*
+    l := todo.List{}
+    taskName := "New Task"
+    l.Add(taskName)    
+    l.Save("foo.json")
+    */
 }
