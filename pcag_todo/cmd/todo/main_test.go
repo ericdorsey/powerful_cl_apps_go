@@ -67,7 +67,12 @@ func TestTodoCLI(t *testing.T) {
 
     })
 
-    t.Run("
+    t.Run("CompleteTask", func(t *testing.T) {
+        cmd := exec.Command(cmdPath, "-complete", "1")
+        if err := cmd.Run(); err != nil {
+            t.Fatal(err)
+        }
+    })
 }
 
 
