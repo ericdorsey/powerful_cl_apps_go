@@ -86,11 +86,23 @@ func (l *List) Get(filename string) error {
     return json.Unmarshal(file, l)
 }
 
+// String prints out a formatted list
+// Implements the fmt.Stringer interface
+func (l *List) String() string {
+    formatted := ""
+
+    for k, t := range *l {
+        prefix := "  "
+        if t.Done {
+            prefix = "X "
+        }
+
+        // Adjust the item number k to print numbers starting from 1 instead of 0
+        formatted += fmt.Sprintf("%s%d: %s\n", prefix, k+1, t.Task)
+    }
+
+    return formatted
+}
+
 func main() {
-    /*
-    l := todo.List{}
-    taskName := "New Task"
-    l.Add(taskName)    
-    l.Save("foo.json")
-    */
 }

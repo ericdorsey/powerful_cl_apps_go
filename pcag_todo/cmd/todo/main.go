@@ -7,7 +7,9 @@ import (
     "github.com/ericdorsey/powerful_cl_apps/pcag_todo"
 )
 
-const todoFileName = ".todo.json"
+//const todoFileName = ".todo.json"
+// Default filename
+var todoFileName = ".todo.json"
 
 func main() {
     // Parse command line flags
@@ -15,6 +17,11 @@ func main() {
     list := flag.Bool("list", false, "List all tasks")
     complete := flag.Int("complete", 0, "Item to be completed") 
     flag.Parse()
+
+    // Check if user defined the TODO_FILENAME env var for custome filename
+    if os.Getenv("TODO_FILENAME") != "" {
+        todoFileName = os.Getenv("TODO_FILENAME")
+    }
 
     // Define an items List as a pointer to the type todo.List
     l := &todo.List{}
@@ -29,11 +36,14 @@ func main() {
     switch {
         case *list:
             // List current todo items
+            /*
             for _, item := range *l {
                 if !item.Done { 
                     fmt.Println(item.Task) 
                 }
             } 
+            */ 
+            fmt.Print(l)
         case *complete > 0:
             // Complete the given item
             if err := l. Complete(*complete); err != nil {
