@@ -41,7 +41,6 @@ func TestMain(m *testing.M) {
 
 func TestTodoCLI(t *testing.T) {
     task := "test task number 1"
-
     dir, err := os.Getwd()
     if err != nil {
         t.Fatal(err)
@@ -55,7 +54,6 @@ func TestTodoCLI(t *testing.T) {
             t.Fatal(err)
         }
     })
-
     task2 := "test task number 2"
     t.Run("AddNewTaskFromSTDIN", func(t *testing.T) {
         cmd := exec.Command(cmdPath, "-add")
@@ -65,11 +63,9 @@ func TestTodoCLI(t *testing.T) {
         }
         io.WriteString(cmdStdIn, task2)
         cmdStdIn.Close()
-
         if err := cmd.Run(); err != nil {
             t.Fatal(err)
         }
-
     })
 
     t.Run("ListTasks", func(t *testing.T) {
@@ -82,11 +78,17 @@ func TestTodoCLI(t *testing.T) {
         if expected != string(out) {
             t.Errorf("Expected %q, got %q instead\n", expected, string(out))
         }
-
     })
 
     t.Run("CompleteTask", func(t *testing.T) {
         cmd := exec.Command(cmdPath, "-complete", "1")
+        if err := cmd.Run(); err != nil {
+            t.Fatal(err)
+        }
+    })
+
+    t.Run("DeleteTask", func(t *testing.T) {
+        cmd := exec.Command(cmdPath, "-del", "1")
         if err := cmd.Run(); err != nil {
             t.Fatal(err)
         }

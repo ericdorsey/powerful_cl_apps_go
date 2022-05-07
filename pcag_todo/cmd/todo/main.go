@@ -40,7 +40,9 @@ func main() {
     // Parse command line flags
     add := flag.Bool("add", false, "Add task to the ToDo list")
     list := flag.Bool("list", false, "List all tasks")
-    complete := flag.Int("complete", 0, "Item to be completed") 
+    complete := flag.Int("complete", 0, "Item to be completed")
+    del := flag.Int("del", 0, "Item to be deleted")
+    // Parse all the flags
     flag.Parse()
 
     // Check if user defined the TODO_FILENAME env var for custome filename
@@ -63,10 +65,19 @@ func main() {
             fmt.Print(l)
         case *complete > 0:
             // Complete the given item
-            if err := l. Complete(*complete); err != nil {
+            if err := l.Complete(*complete); err != nil {
                 fmt.Fprintln(os.Stderr, err)
             }
-
+            // Save the new list
+            if err := l.Save(todoFileName); err != nil {
+                fmt.Fprintln(os.Stderr, err)
+                os.Exit(1)
+            }
+        case *del > 0:
+            // Delete the given item
+            if err := l.Delete(*del); err != nil {
+                fmt.Fprintln(os.Stderr, err)
+            }
             // Save the new list
             if err := l.Save(todoFileName); err != nil {
                 fmt.Fprintln(os.Stderr, err)
@@ -87,8 +98,6 @@ func main() {
                 fmt.Fprintln(os.Stderr, err)
                 os.Exit(1)
             }
-
-
             // Save the new list
             if err := l.Save(todoFileName); err != nil {
                 fmt.Fprintln(os.Stderr, err)
