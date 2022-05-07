@@ -21,21 +21,21 @@ func TestMain(m *testing.M) {
     if runtime.GOOS == "windows" {
         binName += ".exe"
     }
-    
+
     build := exec.Command("go", "build", "-o", binName)
-    
+
     if err := build.Run(); err != nil {
         fmt.Fprintf(os.Stderr, "Cannot build tool %s: %s", binName, err)
         os.Exit(1)
     }
-    
+
     fmt.Println("Running tests....")
     result := m.Run()
-    
+
     fmt.Println("Cleaning up....")
     os.Remove(binName)
     os.Remove(fileName)
-    
+
     os.Exit(result)
 }
 
@@ -43,7 +43,7 @@ func TestTodoCLI(t *testing.T) {
     task := "test task number 1"
 
     dir, err := os.Getwd()
-    if err != nil { 
+    if err != nil {
         t.Fatal(err)
     }
     cmdPath := filepath.Join(dir, binName)
@@ -92,5 +92,3 @@ func TestTodoCLI(t *testing.T) {
         }
     })
 }
-
-

@@ -14,21 +14,25 @@ import (
 // Default filename
 var todoFileName = ".todo.json"
 
+// getTask function decides where to get the description for a new
+// task from: arguments or STDIN
 func getTask(r io.Reader, args ...string) (string, error) {
+    // Add task from arguments
     if len(args) > 0 {
         return strings.Join(args, " "), nil
     }
-    
+
+    // Add task from STDIN
     s := bufio.NewScanner(r)
     s.Scan()
     if err := s.Err(); err != nil {
         return "", err
     }
-    
+
     if len(s.Text()) == 0 {
         return "", fmt.Errorf("Task cannot be blank")
     }
-    
+
     return s.Text(), nil
 }
 
@@ -56,14 +60,6 @@ func main() {
     // Decide what to do based on number of arguments provided
     switch {
         case *list:
-            // List current todo items
-            /*
-            for _, item := range *l {
-                if !item.Done { 
-                    fmt.Println(item.Task) 
-                }
-            } 
-            */ 
             fmt.Print(l)
         case *complete > 0:
             // Complete the given item
@@ -77,7 +73,7 @@ func main() {
                 os.Exit(1)
             }
         case *add:
-            // When any arguments (excluding flags) are provided, they will 
+            // When any arguments (excluding flags) are provided, they will
             // be used as the new task
             t, err := getTask(os.Stdin, flag.Args()...)
             if err != nil {
@@ -85,22 +81,22 @@ func main() {
                 os.Exit(1)
             }
             l.Add(t)
-        
-            // Save the new list
-            if err := l.Save(todoFileName); err != nil {
-                fmt.Fprintln(os.Stderr, err)
-                os.Exit(1)
-            }
-            
 
             // Save the new list
             if err := l.Save(todoFileName); err != nil {
                 fmt.Fprintln(os.Stderr, err)
                 os.Exit(1)
             }
-        default: 
+
+
+            // Save the new list
+            if err := l.Save(todoFileName); err != nil {
+                fmt.Fprintln(os.Stderr, err)
+                os.Exit(1)
+            }
+        default:
             // Invalid flag provided
             fmt.Fprintln(os.Stderr, "Invalid option")
-            os.Exit(1) 
+            os.Exit(1)
     }
 }
