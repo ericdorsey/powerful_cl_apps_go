@@ -36,12 +36,44 @@ func getTask(r io.Reader, args ...string) (string, error) {
     return s.Text(), nil
 }
 
+// printList function prints a List
+func printList(l *todo.List, verbose, incomplete **bool) string {
+    formatted := ""
+    for k, t := range *l {
+        // If incomplete is true, we only want to see incomplete items
+        formatted = ""
+        if **incomplete {
+            if t.Done {
+                continue
+            }
+        }
+        prefix := "  "
+        if t.Done {
+            prefix = "X "
+        }
+        if **verbose {
+            // Show completed and created time
+            if t.Done {
+                formatted += fmt.Sprintf("%s%d: %s\ncreated: %v, completed%v\n", prefix, k+1, t.Task, t.CreatedAt.Format("2006-01-02 15:04"), t.CompletedAt.Format("2006-01-02 15:04"))
+            // Show created time
+            } else {
+                formatted += fmt.Sprintf("%s%d: %s\ncreated: %v\n", prefix, k+1, t.Task, t.CreatedAt.Format("2006-01-02 15:04"))
+            }
+        } else {
+            formatted += fmt.Sprintf("%s%d: %s\n", prefix, k+1, t.Task)
+        }
+    }
+    return formatted
+}
+
 func main() {
     // Parse command line flags
     add := flag.Bool("add", false, "Add task to the ToDo list")
     list := flag.Bool("list", false, "List all tasks")
     complete := flag.Int("complete", 0, "Item to be completed")
     del := flag.Int("del", 0, "Item to be deleted")
+    verbose := flag.Bool("verbose", false, "Verbose output")
+    incomplete := flag.Bool("incomplete", false, "Only show incomplete items")
     // Parse all the flags
     flag.Parse()
 
@@ -62,7 +94,9 @@ func main() {
     // Decide what to do based on number of arguments provided
     switch {
         case *list:
-            fmt.Print(l)
+            //fmt.Print(l)
+            result := printList(l, &verbose, &incomplete)
+            fmt.Printf(result)
         case *complete > 0:
             // Complete the given item
             if err := l.Complete(*complete); err != nil {
