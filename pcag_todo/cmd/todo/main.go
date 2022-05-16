@@ -36,14 +36,15 @@ func getTask(r io.Reader, args ...string) (string, error) {
     return s.Text(), nil
 }
 
-// printList function prints a List
-func printList(l *todo.List, verbose, incomplete **bool) string {
+// printList function prints a List, optionally verbose or only showing incomplete items
+func printList(l *todo.List, verbose, incomplete bool) {
     formatted := ""
     for k, t := range *l {
         // If incomplete is true, we only want to see incomplete items
         formatted = ""
-        if **incomplete {
+        if incomplete {
             if t.Done {
+                // Skip printing this one, it's completed
                 continue
             }
         }
@@ -51,19 +52,19 @@ func printList(l *todo.List, verbose, incomplete **bool) string {
         if t.Done {
             prefix = "X "
         }
-        if **verbose {
+        if verbose {
             // Show completed and created time
             if t.Done {
-                formatted += fmt.Sprintf("%s%d: %s\ncreated: %v, completed%v\n", prefix, k+1, t.Task, t.CreatedAt.Format("2006-01-02 15:04"), t.CompletedAt.Format("2006-01-02 15:04"))
+                formatted += fmt.Sprintf("%s%d: %s -- created: %v, completed %v\n", prefix, k+1, t.Task, t.CreatedAt.Format("2006-01-02 15:04"), t.CompletedAt.Format("2006-01-02 15:04"))
             // Show created time
             } else {
-                formatted += fmt.Sprintf("%s%d: %s\ncreated: %v\n", prefix, k+1, t.Task, t.CreatedAt.Format("2006-01-02 15:04"))
+                formatted += fmt.Sprintf("%s%d: %s -- created: %v\n", prefix, k+1, t.Task, t.CreatedAt.Format("2006-01-02 15:04"))
             }
         } else {
             formatted += fmt.Sprintf("%s%d: %s\n", prefix, k+1, t.Task)
         }
+        fmt.Printf(formatted)
     }
-    return formatted
 }
 
 func main() {
@@ -72,8 +73,8 @@ func main() {
     list := flag.Bool("list", false, "List all tasks")
     complete := flag.Int("complete", 0, "Item to be completed")
     del := flag.Int("del", 0, "Item to be deleted")
-    verbose := flag.Bool("verbose", false, "Verbose output")
-    incomplete := flag.Bool("incomplete", false, "Only show incomplete items")
+    verbose := flag.Bool("verbose", false, "Use in conjunction with -list to show verbose output")
+    incomplete := flag.Bool("incomplete", false, "Use in conjunction with -list to only show incomplete items")
     // Parse all the flags
     flag.Parse()
 
@@ -94,9 +95,12 @@ func main() {
     // Decide what to do based on number of arguments provided
     switch {
         case *list:
-            //fmt.Print(l)
-            result := printList(l, &verbose, &incomplete)
-            fmt.Printf(result)
+            // List the items
+            printList(l, *verbose, *incomplete)
+        case *incomplete:
+            fmt.Printf("This flag must be used in conjunction with -list\n")
+        case *verbose:
+            fmt.Printf("This flag must be used in conjunction with -list\n")
         case *complete > 0:
             // Complete the given item
             if err := l.Complete(*complete); err != nil {

@@ -40,7 +40,7 @@ func (l *List) Complete(i int) error {
     // Adjust index for 0 based index
     ls[i-1].Done = true
     ls[i-1].CompletedAt = time.Now()
-    
+
     return nil
 }
 
@@ -50,7 +50,7 @@ func (l *List) Delete(i int) error {
     if i <=0 || i > len(ls) {
         return fmt.Errorf("Item %d does not exist", i)
     }
-    
+
     // Adjusting index for 0 based index
     *l = append(ls[:i-1], ls[i:]...)
 
@@ -63,7 +63,7 @@ func (l *List) Save(filename string) error {
     if err != nil {
         return err
     }
-    
+
     return os.WriteFile(filename, js, 0644)
 }
 
@@ -82,7 +82,7 @@ func (l *List) Get(filename string) error {
         fmt.Println("File was empty! in .Get()")
         return nil
     }
-    
+
     return json.Unmarshal(file, l)
 }
 
