@@ -55,10 +55,14 @@ func printList(l *todo.List, verbose, incomplete bool) {
         if verbose {
             // Show completed and created time
             if t.Done {
-                formatted += fmt.Sprintf("%s%d: %s -- created: %v, completed %v\n", prefix, k+1, t.Task, t.CreatedAt.Format("2006-01-02 15:04"), t.CompletedAt.Format("2006-01-02 15:04"))
+                formatted += fmt.Sprintf("%s%d: %s -- created: %v, completed %v\n",
+                                        prefix, k+1, t.Task, t.CreatedAt.Format("2006-01-02 15:04"),
+                                        t.CompletedAt.Format("2006-01-02 15:04"))
             // Show created time
             } else {
-                formatted += fmt.Sprintf("%s%d: %s -- created: %v\n", prefix, k+1, t.Task, t.CreatedAt.Format("2006-01-02 15:04"))
+                formatted += fmt.Sprintf("%s%d: %s -- created: %v\n",
+                                        prefix, k+1, t.Task,
+                                        t.CreatedAt.Format("2006-01-02 15:04"))
             }
         } else {
             formatted += fmt.Sprintf("%s%d: %s\n", prefix, k+1, t.Task)
