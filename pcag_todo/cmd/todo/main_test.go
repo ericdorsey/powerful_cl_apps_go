@@ -11,12 +11,23 @@ import (
     "time"
 )
 
+/*
 var (
     binName = "todo"
-    fileName = ".todo.json"
+    //fileName = ".todo.json"
 )
+*/
+
+var binName = "todo"
 
 func TestMain(m *testing.M) {
+    // Default filename
+    var testTodoFileName = ".todo.json"
+    // Use TODO_FILENAME env var if set
+    if os.Getenv("TODO_FILENAME") != "" {
+        testTodoFileName = os.Getenv("TODO_FILENAME")
+    }
+
     fmt.Println("Building tool...")
 
     if runtime.GOOS == "windows" {
@@ -36,7 +47,7 @@ func TestMain(m *testing.M) {
 
     fmt.Println("Cleaning up....")
     os.Remove(binName)
-    os.Remove(fileName)
+    os.Remove(testTodoFileName)
 
     os.Exit(result)
 }
